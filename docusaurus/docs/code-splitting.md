@@ -1,56 +1,152 @@
----
-id: code-splitting
-title: Code Splitting
----
+// Complete DREAM Project for CodeSandbox
 
-Instead of downloading the entire app before users can use it, code splitting allows you to split your code into small chunks which you can then load on demand.
+// index.js (Main Entry for Frontend)
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-This project setup supports code splitting via [dynamic `import()`](https://2ality.com/2017/01/import-operator.html#loading-code-on-demand). Its [proposal](https://github.com/tc39/proposal-dynamic-import) is in stage 4. The `import()` function-like form takes the module name as an argument and returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) which always resolves to the namespace object of the module.
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 
-Here is an example:
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomeScreen from './screens/HomeScreen';
+import OrderScreen from './screens/OrderScreen';
 
-## `moduleA.js`
-
-```js
-const moduleA = 'Hello';
-
-export { moduleA };
-```
-
-## `App.js`
-
-```js
-import React, { Component } from 'react';
-
-class App extends Component {
-  handleClick = () => {
-    import('./moduleA')
-      .then(({ moduleA }) => {
-        // Use moduleA
-      })
-      .catch(err => {
-        // Handle failure
-      });
-  };
-
-  render() {
-    return (
-      <div>
-        <button onClick={this.handleClick}>Load</button>
-      </div>
-    );
-  }
-}
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/order" element={<OrderScreen />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
-```
 
-This will make `moduleA.js` and all its unique dependencies as a separate chunk that only loads after the user clicks the 'Load' button. For more information on the chunks that are created, see the [production build](production-build.md) section.
+// src/screens/HomeScreen.js
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './HomeScreen.css';
 
-You can also use it with `async` / `await` syntax if you prefer it.
+const HomeScreen = () => {
+  return (
+    <div className="home-container">
+      <h1>Welcome to DREAM</h1>
+      <Link to="/order">
+        <button className="order-button">Place an Order</button>
+      </Link>
+    </div>
+  );
+};
 
-## With React Router
+export default HomeScreen;
 
-If you are using React Router check out [this tutorial](https://reactjs.org/docs/code-splitting.html#route-based-code-splitting)
+// src/screens/HomeScreen.css
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #facc15;
+}
 
-Also check out the [Code Splitting](https://reactjs.org/docs/code-splitting.html) section in React documentation.
+.order-button {
+  background-color: #facc15;
+  color: #121212;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+// src/screens/OrderScreen.js
+import React, { useState } from 'react';
+import './OrderScreen.css';
+
+const OrderScreen = () => {
+  const [order, setOrder] = useState('');
+
+  const handleOrder = () => {
+    alert(`Your order for ${order} has been placed!`);
+    setOrder('');
+  };
+
+  return (
+    <div className="order-container">
+      <h1>Place Your Order</h1>
+      <input
+        type="text"
+        placeholder="What do you need?"
+        value={order}
+        onChange={(e) => setOrder(e.target.value)}
+        className="order-input"
+      />
+      <button onClick={handleOrder} className="submit-button">
+        Submit Order
+      </button>
+    </div>
+  );
+};
+
+export default OrderScreen;
+
+// src/screens/OrderScreen.css
+.order-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #facc15;
+}
+
+.order-input {
+  padding: 10px;
+  margin: 20px 0;
+  font-size: 16px;
+  border: 2px solid #facc15;
+  border-radius: 5px;
+}
+
+.submit-button {
+  background-color: #facc15;
+  color: #121212;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+// package.json (essential for CodeSandbox setup)
+{
+  "name": "dream-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  }
+}
