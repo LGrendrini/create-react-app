@@ -1,76 +1,191 @@
----
-id: importing-a-component
-title: Importing a Component
----
+// Complete DREAM Project migrated to Create React App
 
-This project setup supports ES6 modules thanks to webpack.
+// index.js (Main Entry for Frontend)
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
 
-While you can still use `require()` and `module.exports`, we encourage you to use [`import` and `export`](https://exploringjs.com/es6/ch_modules.html) instead.
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
-For example:
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomeScreen from './screens/HomeScreen';
+import OrderScreen from './screens/OrderScreen';
 
-## `Button.js`
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route path="/order" element={<OrderScreen />} />
+      </Routes>
+    </Router>
+  );
+};
 
-```js
-import React, { Component } from 'react';
+export default App;
 
-class Button extends Component {
-  render() {
-    // ...
-  }
+// src/screens/HomeScreen.js
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './HomeScreen.css';
+
+const HomeScreen = () => {
+  return (
+    <div className="home-container">
+      <h1>Welcome to DREAM</h1>
+      <Link to="/order">
+        <button className="order-button">Place an Order</button>
+      </Link>
+    </div>
+  );
+};
+
+export default HomeScreen;
+
+// src/screens/HomeScreen.css
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #facc15;
 }
 
-export default Button; // Don’t forget to use export default!
-```
-
-## `DangerButton.js`
-
-```js
-import React, { Component } from 'react';
-import Button from './Button'; // Import a component from another file
-
-class DangerButton extends Component {
-  render() {
-    return <Button color="red" />;
-  }
+.order-button {
+  background-color: #facc15;
+  color: #121212;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
 }
 
-export default DangerButton;
-```
+// src/screens/OrderScreen.js
+import React, { useState } from 'react';
+import './OrderScreen.css';
 
-Be aware of the [difference between default and named exports](https://stackoverflow.com/questions/36795819/react-native-es-6-when-should-i-use-curly-braces-for-import/36796281#36796281). It is a common source of mistakes.
+const OrderScreen = () => {
+  const [order, setOrder] = useState('');
 
-We suggest that you stick to using default imports and exports when a module only exports a single thing (for example, a component). That’s what you get when you use `export default Button` and `import Button from './Button'`.
+  const handleOrder = () => {
+    alert(`Your order for ${order} has been placed!`);
+    setOrder('');
+  };
 
-Named exports are useful for utility modules that export several functions. A module may have at most one default export and as many named exports as you like.
+  return (
+    <div className="order-container">
+      <h1>Place Your Order</h1>
+      <input
+        type="text"
+        placeholder="What do you need?"
+        value={order}
+        onChange={(e) => setOrder(e.target.value)}
+        className="order-input"
+      />
+      <button onClick={handleOrder} className="submit-button">
+        Submit Order
+      </button>
+    </div>
+  );
+};
 
-Learn more about ES6 modules:
+export default OrderScreen;
 
-- [When to use the curly braces?](https://stackoverflow.com/questions/36795819/react-native-es-6-when-should-i-use-curly-braces-for-import/36796281#36796281)
-- [Exploring ES6: Modules](https://exploringjs.com/es6/ch_modules.html)
-- [Understanding ES6: Modules](https://leanpub.com/understandinges6/read#leanpub-auto-encapsulating-code-with-modules)
+// src/screens/OrderScreen.css
+.order-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #facc15;
+}
 
-## Absolute Imports
+.order-input {
+  padding: 10px;
+  margin: 20px 0;
+  font-size: 16px;
+  border: 2px solid #facc15;
+  border-radius: 5px;
+}
 
-You can configure your application to support importing modules using absolute paths. This can be done by configuring a `jsconfig.json` or `tsconfig.json` file in the root of your project. If you're using TypeScript in your project, you will already have a `tsconfig.json` file.
+.submit-button {
+  background-color: #facc15;
+  color: #121212;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
 
-Below is an example `jsconfig.json` file for a JavaScript project. You can create the file if it doesn't already exist:
+// src/index.css
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-```json
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+// package.json
 {
-  "compilerOptions": {
-    "baseUrl": "src"
+  "name": "dream-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.2",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
-  "include": ["src"]
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
-```
-
-If you're using TypeScript, you can configure the `baseUrl` setting inside the `compilerOptions` of your project's `tsconfig.json` file.
-
-Now that you've configured your project to support absolute imports, if you want to import a module located at `src/components/Button.js`, you can import the module like so:
-
-```js
-import Button from 'components/Button';
-```
-
-For more information on these configuration files, see the [jsconfig.json reference](https://code.visualstudio.com/docs/languages/jsconfig) and [tsconfig.json reference](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) documentation.
